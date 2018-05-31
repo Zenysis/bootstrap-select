@@ -1,7 +1,7 @@
 /*!
  * Bootstrap-select v1.12.2 (http://silviomoreto.github.io/bootstrap-select)
  *
- * Copyright 2013-2017 bootstrap-select
+ * Copyright 2013-2018 bootstrap-select
  * Licensed under MIT (https://github.com/silviomoreto/bootstrap-select/blob/master/LICENSE)
  */
 
@@ -191,6 +191,45 @@
     }
   };
   //</editor-fold>
+
+  // Case insensitive flexible search
+
+  // From element to jquery object
+
+  // From uid to tokens
+  var tokenCache = {};
+  var uidCounter = 1;
+
+  // From search string to regexp
+  var regexCache = {};
+  $.expr.pseudos.flexContains = function (obj, index, meta) {
+    var $parent = $(obj);
+
+    // Extract tokens.
+    var uid = $parent.data('search-uid');
+    if (!uid) {
+      uid = uidCounter++;
+      $parent.data('search-uid', uid);
+
+      var $elt = $(obj).find('a');
+      tokenCache[uid] = ($elt.data('tokens') || $elt.text()).toString();
+    }
+
+    // Search for string.
+    var haystack = tokenCache[uid];
+    var searchStr = meta[3];
+    if (!regexCache[searchStr]) {
+      //var splits = searchStr.split(' ');
+      //var compiledRegex = new RegExp(splits.join('|'), 'gi');
+      var compiledRegex = new RegExp(searchStr, 'gi');
+      regexCache[searchStr] = compiledRegex;
+    }
+    var regex = regexCache[searchStr];
+
+    return regex.test(haystack);
+  };
+  window.__bs_tokenCache = tokenCache;
+  window.__bs_regexCache = regexCache;
 
   // Case insensitive contains search
   $.expr.pseudos.icontains = function (obj, index, meta) {
@@ -1516,7 +1555,8 @@
         startsWith: 'ibegins'
       };
 
-      return styles[this.options.liveSearchStyle] || 'icontains';
+      //return styles[this.options.liveSearchStyle] || 'icontains';
+      return styles[this.options.liveSearchStyle] || 'flexContains';
     },
 
     val: function (value) {
@@ -1859,7 +1899,7 @@
 
   $(document)
       .data('keycount', 0)
-      .on('keydown.bs.select', '.bootstrap-select [data-toggle=dropdown], .bootstrap-select [role="listbox"], .bs-searchbox input', debounce(Selectpicker.prototype.keydown, 350))
+      .on('keydown.bs.select', '.bootstrap-select [data-toggle=dropdown], .bootstrap-select [role="listbox"], .bs-searchbox input', debounce(Selectpicker.prototype.keydown, 400))
       .on('focusin.modal', '.bootstrap-select [data-toggle=dropdown], .bootstrap-select [role="listbox"], .bs-searchbox input', function (e) {
         e.stopPropagation();
       });
