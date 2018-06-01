@@ -623,6 +623,7 @@
         // since liObj is recalculated on every refresh, liIndex needs to be decreased even if the titleOption is already appended
         liIndex--;
 
+        /*
         if (!this.$element.find('.bs-title-option').length) {
           // Use native JS to prepend option (faster)
           var element = this.$element[0];
@@ -638,6 +639,7 @@
             titleOption.selected = true;
           }
         }
+        */
       }
 
       var $selectOptions = this.$element.find('option');
@@ -651,11 +653,16 @@
 
         // Get the class and text for the option
         var optionClass = this.className || '',
-            inline = htmlEscape(this.style.cssText),
-            text = $this.data('content') ? $this.data('content') : $this.html(),
-            tokens = $this.data('tokens') ? $this.data('tokens') : null,
-            subtext = typeof $this.data('subtext') !== 'undefined' ? '<small class="text-muted">' + $this.data('subtext') + '</small>' : '',
-            icon = typeof $this.data('icon') !== 'undefined' ? '<span class="' + that.options.iconBase + ' ' + $this.data('icon') + '"></span> ' : '',
+            //inline = htmlEscape(this.style.cssText),
+            inline = '',
+            //text = $this.data('content') ? $this.data('content') : $this.html(),
+            text = $this.data('content') || $this.html(),
+            //tokens = $this.data('tokens') ? $this.data('tokens') : null,
+            tokens = $this.data('tokens') || null,
+            //subtext = typeof $this.data('subtext') !== 'undefined' ? '<small class="text-muted">' + $this.data('subtext') + '</small>' : '',
+            subtext = '',
+            //icon = typeof $this.data('icon') !== 'undefined' ? '<span class="' + that.options.iconBase + ' ' + $this.data('icon') + '"></span> ' : '',
+            icon = '',
             $parent = $this.parent(),
             isOptgroup = $parent[0].tagName === 'OPTGROUP',
             isOptgroupDisabled = isOptgroup && $parent[0].disabled,
@@ -677,10 +684,12 @@
           return;
         }
 
+        /*
         if (!$this.data('content')) {
           // Prepend any icon and append any subtext to the main text.
           text = icon + '<span class="text">' + text + subtext + '</span>';
         }
+        */
 
         if (isOptgroup && $this.data('divider') !== true) {
           if (that.options.hideDisabled && isDisabled) {
@@ -695,15 +704,18 @@
             }
           }
 
-          var optGroupClass = ' ' + $parent[0].className || '';
+          //var optGroupClass = ' ' + $parent[0].className || '';
+          var optGroupClass = '';
 
           if ($this.index() === 0) { // Is it the first option of the optgroup?
             optID += 1;
 
             // Get the opt group label
             var label = $parent[0].label,
-                labelSubtext = typeof $parent.data('subtext') !== 'undefined' ? '<small class="text-muted">' + $parent.data('subtext') + '</small>' : '',
-                labelIcon = $parent.data('icon') ? '<span class="' + that.options.iconBase + ' ' + $parent.data('icon') + '"></span> ' : '';
+                //labelSubtext = typeof $parent.data('subtext') !== 'undefined' ? '<small class="text-muted">' + $parent.data('subtext') + '</small>' : '',
+                labelSubtext = '',
+                //labelIcon = $parent.data('icon') ? '<span class="' + that.options.iconBase + ' ' + $parent.data('icon') + '"></span> ' : '';
+                labelIcon = '',
 
             label = labelIcon + '<span class="text">' + htmlEscape(label) + labelSubtext + '</span>';
 
@@ -721,7 +733,7 @@
           }
 
           _li.push(generateLI(generateA(text, 'opt ' + optionClass + optGroupClass, inline, tokens), index, '', optID));
-        } else if ($this.data('divider') === true) {
+        } /*else if ($this.data('divider') === true) {
           _li.push(generateLI('', index, 'divider'));
         } else if ($this.data('hidden') === true) {
           // set prevHiddenIndex - the index of the first hidden option in a group of hidden options
@@ -753,15 +765,17 @@
             _li.push(generateLI('', null, 'divider', optID + 'div'));
           }
           _li.push(generateLI(generateA(text, optionClass, inline, tokens), index));
-        }
+        } */
 
         that.liObj[index] = liIndex;
       });
 
       //If we are not multiple, we don't have a selected item, and we don't have a title, select the first element so something is set in the button
+      /*
       if (!this.multiple && this.$element.find('option:selected').length === 0 && !this.options.title) {
         this.$element.find('option').eq(0).prop('selected', true).attr('selected', 'selected');
       }
+      */
 
       return _li.join('');
     },
@@ -780,6 +794,7 @@
           $selectOptions = this.$element.find('option');
 
       //Update the LI to match the SELECT
+      /*
       if (updateLi !== false) {
         $selectOptions.each(function (index) {
           var $lis = that.findLis().eq(that.liObj[index]);
@@ -788,6 +803,7 @@
           that.setSelected(index, this.selected, $lis);
         });
       }
+      */
 
       this.togglePlaceholder();
 
@@ -872,6 +888,7 @@
       }
     },
 
+    /*
     liHeight: function (refresh) {
       if (!refresh && (this.options.size === false || this.sizeInfo)) return;
 
@@ -908,7 +925,7 @@
       }
       if (actions) menu.appendChild(actions);
       menu.appendChild(menuInner);
-      if (doneButton) menu.appendChild(doneButton);
+      //if (doneButton) menu.appendChild(doneButton);
       newElement.appendChild(menu);
 
       document.body.appendChild(newElement);
@@ -954,10 +971,27 @@
         menuExtras: menuExtras
       };
     },
+    */
 
     setSize: function () {
       this.findLis();
-      this.liHeight();
+      //this.liHeight();
+      this.sizeInfo = {
+        actionsHeight: 0,
+        dividerHeight: 0,
+        doneButtonHeight: 0,
+        headerHeight: 0,
+        liHeight: 24,
+        menuExtras: {
+          horiz: 4,
+          vert: 13,
+        },
+        menuPadding: {
+          horiz: 2,
+          vert: 12,
+        },
+        searchheight: 42,
+      };
 
       if (this.options.header) this.$menu.css('padding-top', 0);
       if (this.options.size === false) return;
